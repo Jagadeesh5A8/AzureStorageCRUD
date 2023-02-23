@@ -14,25 +14,29 @@ namespace AzureStorageCRUD.Controllers
         {
             _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         }
-        [HttpGet]
+
+        [HttpGet("Get")]
         [ActionName(nameof(GetAsync))]
-        public async Task<IActionResult> GetAsync(string tableName,string category, string id)
+        public async Task<IActionResult> GetAsync(string category, string id)
         {
             try
             {
-                var response = await _storageService.GetEntityAsync(tableName,category, id);
+                var response = await _storageService.GetEntityAsync(category, id);
+
                 if (response == null)
                     return BadRequest();
+
                 return Ok(response);
             }
+
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PostAsync(string tableName, [FromBody] GroceryItemEntity entity)
+        [HttpPost("Add")]
+        public async Task<IActionResult> PostAsync([FromBody] GroceryItemEntity entity)
         {
             try
             {
@@ -42,31 +46,35 @@ namespace AzureStorageCRUD.Controllers
                 entity.Id = Id;
                 entity.RowKey = Id;
 
-                var createdEntity = await _storageService.AddEntityAsync(tableName, entity);
+                var createdEntity = await _storageService.AddEntityAsync(entity);
 
                 if (createdEntity == null)
                     return BadRequest();
+
                 return CreatedAtAction(nameof(GetAsync), createdEntity);
             }
+
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync(string tableName, [FromBody] GroceryItemEntity entity)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutAsync([FromBody] GroceryItemEntity entity)
         {
             try
             {
                 entity.PartitionKey = entity.Category;
                 entity.RowKey = entity.Id;
 
-                var response = await _storageService.UpsertEntityAsync(tableName, entity);
+                var response = await _storageService.UpsertEntityAsync(entity);
 
-                if (response == null) return BadRequest();
+                if (response == null) 
+                    return BadRequest();
                 return NoContent();
             }
+
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -74,17 +82,19 @@ namespace AzureStorageCRUD.Controllers
 
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAsync(string tableName, [FromQuery] string category, string id)
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> DeleteAsync([FromQuery] string category, string id)
         {
             try
             {
-                var response = await _storageService.DeleteEntityAsync(tableName, category, id);
+                var response = await _storageService.DeleteEntityAsync(category, id);
+
                 if(response == true)
                     return NoContent();
                 else 
                     return NotFound();
             }
+
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);

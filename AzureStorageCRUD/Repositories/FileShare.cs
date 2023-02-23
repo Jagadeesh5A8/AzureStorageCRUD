@@ -16,7 +16,7 @@ namespace AzureStorageCRUD.Repositories
             _fileName = config.GetValue<string>("FileShareName");
         }
 
-        public async Task FileUploadAsync(FileDetails fileDetails)
+        public async Task<bool> FileUploadAsync(IFormFile file)
         {
             ShareClient share = new ShareClient(_fileConnectionString, _fileName);
 
@@ -24,34 +24,30 @@ namespace AzureStorageCRUD.Repositories
 
             if (await share.ExistsAsync())
             {
-                ShareDirectoryClient directory = share.GetDirectoryClient("FileShareDemoFiles");
+                ShareDirectoryClient directory = share.GetDirectoryClient("DemoFiles");
 
                 await directory.CreateIfNotExistsAsync();
 
                 if (await directory.ExistsAsync())
                 {
-                    ShareFileClient file = directory.GetFileClient(fileDetails.FileDetail.FileName);
+                    ShareFileClient files = directory.GetFileClient(file.FileName);
 
-                    using (var stream = fileDetails.FileDetail.OpenReadStream())
+                    using (var stream = file.OpenReadStream())
                     {
-                        file.Create(stream.Length);
-                        file.UploadRange(
-                            new HttpRange(0, stream.Length),
-                            stream);
+                        files.Create(stream.Length);
+                        files.UploadRange(new HttpRange(0, stream.Length), stream);
                     }
+                    return true;
                 }
             }
-            else
-            {
-                Console.WriteLine($"File is not upload successfully");
-            }
+            return false;
         }
 
         public async Task<byte[]> FileDownloadAsync(string fileShareName)
         {
             ShareClient share = new ShareClient(_fileConnectionString, _fileName);
 
-            ShareDirectoryClient directory = share.GetDirectoryClient("FileShareDemoFiles");
+            ShareDirectoryClient directory = share.GetDirectoryClient("DemoFiles");
 
             ShareFileClient file = directory.GetFileClient(fileShareName);
 
@@ -68,7 +64,7 @@ namespace AzureStorageCRUD.Repositories
         {
             ShareClient share = new ShareClient(_fileConnectionString, _fileName);
 
-            ShareDirectoryClient directory = share.GetDirectoryClient("FileShareDemoFiles");
+            ShareDirectoryClient directory = share.GetDirectoryClient("DemoFiles");
 
             ShareFileClient file = directory.GetFileClient(fileShareName);
 

@@ -22,10 +22,11 @@ namespace AzureStorageCRUD.Controllers
             try
             {
                 var files = await _storage.ListAsync();
+
                 if (files.Count == 0)
                     return NotFound();
 
-                return StatusCode(StatusCodes.Status200OK, files);
+                return Ok(files);
             }
             catch (Exception ex)
             {
@@ -43,11 +44,11 @@ namespace AzureStorageCRUD.Controllers
 
                 if (response.Error == true)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.Status);
+                    return BadRequest();
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status200OK, response);
+                    return Ok(response);
                 }
             }
             catch (Exception ex)
@@ -65,7 +66,7 @@ namespace AzureStorageCRUD.Controllers
 
                 if (file == null)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, $"File {filename} could not be downloaded.");
+                    return NotFound();
                 }
                 else
                 {
@@ -83,15 +84,15 @@ namespace AzureStorageCRUD.Controllers
         {
             try
             {
-                BlobResponseDto response = await _storage.DeleteAsync(filename);
+                var response = await _storage.DeleteAsync(filename);
 
-                if (response.Error == true)
+                if (response == false)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.Status);
+                    return NotFound();
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status200OK, response.Status);
+                    return NoContent();
                 }
             }
             catch (Exception ex)

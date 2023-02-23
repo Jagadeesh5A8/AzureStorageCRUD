@@ -16,15 +16,13 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadFile([FromForm] FileDetails fileDetail)
+        public async Task<IActionResult> UploadFile(IFormFile file)
         {
             try
             {
-                if (fileDetail.FileDetail != null)
-                {
-                    await fileShare.FileUploadAsync(fileDetail);
+                var result = await fileShare.FileUploadAsync(file);
+                if(result == true)
                     return Ok();
-                }
                 return BadRequest();
             }
             catch (Exception ex)
@@ -51,7 +49,7 @@ namespace AzureStorageCRUD.Controllers
             }
         }
 
-        [HttpDelete("DeleteFile")]
+        [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteFile(string fileName)
         {
             try

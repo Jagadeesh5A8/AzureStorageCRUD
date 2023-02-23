@@ -6,7 +6,7 @@ namespace AzureStorageCRUD.Repositories
     {
         Task<BlobResponseDto> UploadAsync(IFormFile file);
         Task<BlobRequestDto> DownloadAsync(string blobFilename);
-        Task<BlobResponseDto> DeleteAsync(string blobFilename);
+        Task<bool> DeleteAsync(string blobFilename);
         Task<List<BlobRequestDto>> ListAsync();
     }
 }

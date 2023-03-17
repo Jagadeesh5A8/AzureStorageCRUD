@@ -4,8 +4,8 @@ namespace AzureStorageCRUD.Repositories
 {
     public interface IFileShare
     {
-        Task<bool> FileUploadAsync(IFormFile file);
-        Task<byte[]> FileDownloadAsync(string fileShareName);
-        Task<bool> DeleteFileAsync(string fileShareName);
+        Task<bool> FileUploadAsync(IFormFile file, string fileName);
+        Task<byte[]> FileDownloadAsync(string fileName, string fileShareName);
+        Task<bool> DeleteFileAsync(string fileShareName, string fileName);
     }
 }

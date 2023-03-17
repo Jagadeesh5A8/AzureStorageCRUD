@@ -4,9 +4,9 @@ namespace AzureStorageCRUD.Repositories
 {
     public interface IBlobStorageRepo
     {
-        Task<BlobResponseDto> UploadAsync(IFormFile file);
-        Task<BlobRequestDto> DownloadAsync(string blobFilename);
-        Task<bool> DeleteAsync(string blobFilename);
-        Task<List<BlobRequestDto>> ListAsync();
+        Task<BlobResponseDto> UploadAsync(IFormFile file, string _storageContainerName);
+        Task<BlobRequestDto> DownloadAsync(string blobFilename, string _storageContainerName);
+        Task<bool> DeleteAsync(string blobFilename, string _storageContainerName);
+        Task<List<BlobRequestDto>> ListAsync(string _storageContainerName);
     }
 }

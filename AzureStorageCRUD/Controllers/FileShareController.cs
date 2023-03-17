@@ -16,12 +16,12 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, string fileName)
         {
             try
             {
-                var result = await fileShare.FileUploadAsync(file);
-                if(result == true)
+                var result = await fileShare.FileUploadAsync(file, fileName);
+                if (result == true)
                     return Ok();
                 return BadRequest();
             }
@@ -32,11 +32,11 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpGet("Download")]
-        public async Task<IActionResult> DownloadFile(string fileName)
+        public async Task<IActionResult> DownloadFile(string fileName, string fileShareName)
         {
             try
             {
-                var result = await fileShare.FileDownloadAsync(fileName);
+                var result = await fileShare.FileDownloadAsync(fileName, fileShareName);
                 if (result != null)
                 {
                     return File(result, "application/octet-stream", fileName);
@@ -50,12 +50,12 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> DeleteFile(string fileName)
+        public async Task<IActionResult> DeleteFile(string fileShareName, string fileName)
         {
             try
             {
-                var result = await fileShare.DeleteFileAsync(fileName);
-                if(result == true)
+                var result = await fileShare.DeleteFileAsync(fileShareName, fileName);
+                if (result == true)
                     return NoContent();
                 return NotFound();
             }

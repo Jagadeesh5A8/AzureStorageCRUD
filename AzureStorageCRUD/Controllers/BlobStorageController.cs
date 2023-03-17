@@ -17,11 +17,11 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpGet(nameof(Get))]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string StorageContainerName)
         {
             try
             {
-                var files = await _storage.ListAsync();
+                var files = await _storage.ListAsync(StorageContainerName);
 
                 if (files.Count == 0)
                     return NotFound();
@@ -36,11 +36,11 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpPost(nameof(Upload))]
-        public async Task<IActionResult> Upload(IFormFile file)
+        public async Task<IActionResult> Upload(IFormFile file, string StorageContainerName)
         {
             try
             {
-                BlobResponseDto? response = await _storage.UploadAsync(file);
+                BlobResponseDto? response = await _storage.UploadAsync(file, StorageContainerName);
 
                 if (response.Error == true)
                 {
@@ -57,12 +57,12 @@ namespace AzureStorageCRUD.Controllers
             }
         }
 
-        [HttpGet("{filename}")]
-        public async Task<IActionResult> Download(string filename)
+        [HttpGet(nameof(Download))]
+        public async Task<IActionResult> Download(string filename, string StorageContainerName)
         {
             try
             {
-                BlobRequestDto? file = await _storage.DownloadAsync(filename);
+                BlobRequestDto? file = await _storage.DownloadAsync(filename, StorageContainerName);
 
                 if (file == null)
                 {
@@ -80,11 +80,11 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(string filename)
+        public async Task<IActionResult> Delete(string filename, string StorageContainerName)
         {
             try
             {
-                var response = await _storage.DeleteAsync(filename);
+                var response = await _storage.DeleteAsync(filename, StorageContainerName);
 
                 if (response == false)
                 {

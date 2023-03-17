@@ -8,17 +8,17 @@ namespace AzureStorageCRUD.Repositories
     public class FileShare:IFileShare
     {
         private readonly string _fileConnectionString;
-        private readonly string _fileName;
+        //private readonly string _fileName;
 
         public FileShare(IConfiguration config)
         {
             _fileConnectionString = config.GetValue<string>("StorageConnectionString");
-            _fileName = config.GetValue<string>("FileShareName");
+            //_fileName = config.GetValue<string>("FileShareName");
         }
 
-        public async Task<bool> FileUploadAsync(IFormFile file)
+        public async Task<bool> FileUploadAsync(IFormFile file, string fileName)
         {
-            ShareClient share = new ShareClient(_fileConnectionString, _fileName);
+            ShareClient share = new ShareClient(_fileConnectionString, fileName);
 
             await share.CreateIfNotExistsAsync();
 
@@ -43,9 +43,9 @@ namespace AzureStorageCRUD.Repositories
             return false;
         }
 
-        public async Task<byte[]> FileDownloadAsync(string fileShareName)
+        public async Task<byte[]> FileDownloadAsync(string fileShareName, string fileName)
         {
-            ShareClient share = new ShareClient(_fileConnectionString, _fileName);
+            ShareClient share = new ShareClient(_fileConnectionString, fileName);
 
             ShareDirectoryClient directory = share.GetDirectoryClient("DemoFiles");
 
@@ -60,16 +60,16 @@ namespace AzureStorageCRUD.Repositories
             }
         }
 
-        public async Task<bool> DeleteFileAsync(string fileShareName)
+        public async Task<bool> DeleteFileAsync(string fileShareName, string fileName)
         {
-            ShareClient share = new ShareClient(_fileConnectionString, _fileName);
+            ShareClient share = new ShareClient(_fileConnectionString, fileName);
 
             ShareDirectoryClient directory = share.GetDirectoryClient("DemoFiles");
 
             ShareFileClient file = directory.GetFileClient(fileShareName);
 
             var result = await file.DeleteAsync();
-            if(result.IsError == false)
+            if (result.IsError == false)
             {
                 return true;
             }

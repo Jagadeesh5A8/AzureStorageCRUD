@@ -28,7 +28,7 @@ namespace AzureStorageCRUD.Services
             return message;
         }
 
-        public async Task<string?> UpdateMessage(string queueName)
+        public async Task<string?> UpdateMessage(string queueName, string messageName)
         {
             var queueClient = new QueueClient(_storageConnectionString, queueName);
 
@@ -38,7 +38,7 @@ namespace AzureStorageCRUD.Services
 
                 await queueClient.UpdateMessageAsync(message[0].MessageId,
                         message[0].PopReceipt,
-                        "testing result",
+                        messageName,
                         TimeSpan.FromSeconds(2.0)
                     );
                 return message[0].Body.ToString();
@@ -49,11 +49,8 @@ namespace AzureStorageCRUD.Services
         public async Task<string?> ReceiveMessage(string queueName)
         {
             QueueMessage[] retrievedMessage;
-            var options = new QueueClientOptions
-            {
-                MessageEncoding = QueueMessageEncoding.Base64
-            };
-            QueueClient queueClient = new QueueClient(_storageConnectionString, queueName, options);
+            
+            QueueClient queueClient = new QueueClient(_storageConnectionString, queueName);
 
             if (queueClient.Exists())
             {

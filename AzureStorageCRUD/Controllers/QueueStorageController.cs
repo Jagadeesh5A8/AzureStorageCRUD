@@ -53,11 +53,11 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpPut("UpdateMessage")]
-        public async Task<IActionResult> Update(string queuename)
+        public async Task<IActionResult> Update(string queuename, string messageName)
         {
             try
             {
-                var response = await _queueService.UpdateMessage(queuename);
+                var response = await _queueService.UpdateMessage(queuename, messageName);
                 if (response != null)
                 {
                     return Ok(response);

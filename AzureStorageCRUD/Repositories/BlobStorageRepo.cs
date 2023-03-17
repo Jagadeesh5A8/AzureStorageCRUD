@@ -8,14 +8,14 @@ namespace AzureStorageCRUD.Repositories
     public class BlobStorageRepo : IBlobStorageRepo
     {
         private readonly string _storageConnectionString;
-        private readonly string _storageContainerName;
+        //private readonly string _storageContainerName;
 
         public BlobStorageRepo(IConfiguration configuration)
         {
             _storageConnectionString = configuration.GetValue<string>("StorageConnectionString");
-            _storageContainerName = configuration.GetValue<string>("BlobContainerName");
+            // _storageContainerName = configuration.GetValue<string>("BlobContainerName");
         }
-        public async Task<List<BlobRequestDto>> ListAsync()
+        public async Task<List<BlobRequestDto>> ListAsync(string _storageContainerName)
         {
             BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
 
@@ -39,7 +39,7 @@ namespace AzureStorageCRUD.Repositories
             return files;
         }
 
-        public async Task<BlobResponseDto> UploadAsync(IFormFile file)
+        public async Task<BlobResponseDto> UploadAsync(IFormFile file, string _storageContainerName)
         {
             BlobResponseDto response = new();
 
@@ -59,7 +59,7 @@ namespace AzureStorageCRUD.Repositories
 
             return response;
         }
-        public async Task<BlobRequestDto> DownloadAsync(string filename)
+        public async Task<BlobRequestDto> DownloadAsync(string filename, string _storageContainerName)
         {
             BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
 
@@ -76,17 +76,17 @@ namespace AzureStorageCRUD.Repositories
                 string contentType = content.Value.Details.ContentType;
 
                 return new BlobRequestDto { Content = data, Name = name, ContentType = contentType };
-            }           
+            }
             return null;
         }
-        public async Task<bool> DeleteAsync(string filename)
+        public async Task<bool> DeleteAsync(string filename, string _storageContainerName)
         {
             BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
 
             BlobClient file = client.GetBlobClient(filename);
 
             var result = await file.DeleteAsync();
-            if(result.IsError == true)
+            if (result.IsError == true)
             {
                 return false;
             }

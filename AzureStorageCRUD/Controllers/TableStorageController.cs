@@ -17,11 +17,11 @@ namespace AzureStorageCRUD.Controllers
 
         [HttpGet("Get")]
         [ActionName(nameof(GetAsync))]
-        public async Task<IActionResult> GetAsync(string category, string id)
+        public async Task<IActionResult> GetAsync(string category, string id, string tableName)
         {
             try
             {
-                var response = await _storageService.GetEntityAsync(category, id);
+                var response = await _storageService.GetEntityAsync(category, id, tableName);
 
                 if (response == null)
                     return BadRequest();
@@ -36,7 +36,7 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> PostAsync([FromBody] GroceryItemEntity entity)
+        public async Task<IActionResult> PostAsync([FromBody] GroceryItemEntity entity, string tableName)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace AzureStorageCRUD.Controllers
                 entity.Id = Id;
                 entity.RowKey = Id;
 
-                var createdEntity = await _storageService.AddEntityAsync(entity);
+                var createdEntity = await _storageService.AddEntityAsync(entity,  tableName);
 
                 if (createdEntity == null)
                     return BadRequest();
@@ -61,14 +61,14 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpPut("Update")]
-        public async Task<IActionResult> PutAsync([FromBody] GroceryItemEntity entity)
+        public async Task<IActionResult> PutAsync([FromBody] GroceryItemEntity entity, string tableName)
         {
             try
             {
                 entity.PartitionKey = entity.Category;
                 entity.RowKey = entity.Id;
 
-                var response = await _storageService.UpsertEntityAsync(entity);
+                var response = await _storageService.UpsertEntityAsync(entity,  tableName);
 
                 if (response == null) 
                     return BadRequest();
@@ -83,11 +83,11 @@ namespace AzureStorageCRUD.Controllers
         }
 
         [HttpDelete("Delete")]
-        public async Task<IActionResult> DeleteAsync([FromQuery] string category, string id)
+        public async Task<IActionResult> DeleteAsync([FromQuery] string category, string id, string tableName)
         {
             try
             {
-                var response = await _storageService.DeleteEntityAsync(category, id);
+                var response = await _storageService.DeleteEntityAsync(category, id,tableName);
 
                 if(response == true)
                     return NoContent();
